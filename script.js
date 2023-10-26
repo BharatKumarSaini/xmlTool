@@ -13,7 +13,7 @@ const parentName = 'remain';
 // Please Enter Required Childrens in  quotes seperated by commas
 // eg:-  const children = ['lie',"freedom", "powder"];
 // Please be careful it is CASE SENSETIVE
-const children = ['lie',"freedom", ];
+const children = ['lie',"freedom", "powder"];
 
 
 
@@ -76,23 +76,39 @@ const getAllValuesOfKey = (jsonData, key) => {
 
 
 const makeHeader = (sheetNumber) => {
-  if(sheetNumber == 2) {
+  
+  if(sheetNumber == 2 || sheetNumber == 420) {
     header.push({id: 'empty', title: ''});
     header.push({id: 'empty', title: ''});
   }
-  header.push( {id: `pName-${sheetNumber}`, title: `${parentName}`});
-  children.map((child, index) => {
-  
-    const newHeader = {
-      id: `${index}-${sheetNumber}`,
-      title : `${children[index]}`
-    }
-    header.push(newHeader);
-  });
+
+  if(sheetNumber === 420){
+
+    header.push( {id: `pName-${sheetNumber}`, title: `Truth Table`});
+    children.map((child, index) => {
+    
+      const newHeader = {
+        id: `${index}-${sheetNumber}`,
+        title : `${children[index]}`
+      }
+      header.push(newHeader);
+    });
+  }else{
+    header.push( {id: `pName-${sheetNumber}`, title: `${parentName}`});
+    children.map((child, index) => {
+    
+      const newHeader = {
+        id: `${index}-${sheetNumber}`,
+        title : `${children[index]}`
+      }
+      header.push(newHeader);
+    });
+}
 };
 
 makeHeader(1);
 makeHeader(2);
+makeHeader(420);
 
 
 const makeRecord = (parentInstance, sheetNumber, secondInstance, secondSheet) => {
@@ -184,81 +200,6 @@ if(firstLength > secondLength) {
   })
 }
 
-// const groupedRecords = {};
-
-// // Group records by pName and sheet number
-// records.forEach(record => {
-//   const keys = Object.keys(record);
-//   const sheetNumber = keys.find(key => key.startsWith('0-'));
-//   if (sheetNumber) {
-//     const pName = record[`pName-${sheetNumber.split('-')[1]}`];
-//     if (!groupedRecords[pName]) {
-//       groupedRecords[pName] = [];
-//     }
-//     groupedRecords[pName].push(record);
-//   }
-// });
-
-// const finalObjects = [];
-
-// Object.keys(groupedRecords).forEach(pName => {
-//   const sheet1Objects = groupedRecords[pName].filter(record => record['0-1']);
-//   const sheet2Objects = groupedRecords[pName].filter(record => record['0-2']);
-
-//   sheet1Objects.forEach(sheet1Obj => {
-//     const correspondingSheet2Obj = sheet2Objects.find(sheet2Obj => sheet2Obj['0-2'] === sheet1Obj['0-1']);
-//     if (correspondingSheet2Obj) {
-//       // Matching objects
-//       const finalObject = {
-//         'pName-1': sheet1Obj['pName-1'],
-//         '0-1': sheet1Obj['0-1'],
-//         '1-1': sheet1Obj['1-1'],
-//         '2-1': sheet1Obj['2-1'],
-//         'pName-2': correspondingSheet2Obj['pName-2'],
-//         '0-2': correspondingSheet2Obj['0-2'],
-//         '1-2': correspondingSheet2Obj['1-2'],
-//         '2-2': correspondingSheet2Obj['2-2']
-//       };
-//       finalObjects.push(finalObject);
-//     } else {
-//       // Non-matching object in sheet2
-//       const nonMatchingObject = {
-//         'pName-1': 'NOT FOUND',
-//         '0-1': 'NOT FOUND',
-//         '1-1': 'NOT FOUND',
-//         '2-1': 'NOT FOUND',
-//         'pName-2': sheet1Obj['pName-1'],
-//         '0-2': sheet1Obj['0-1'],
-//         '1-2': sheet1Obj['1-1'],
-//         '2-2': sheet1Obj['2-1']
-//       };
-//       finalObjects.push(nonMatchingObject);
-//     }
-//   });
-
-//   sheet2Objects.forEach(sheet2Obj => {
-//     const correspondingSheet1Obj = sheet1Objects.find(sheet1Obj => sheet1Obj['0-1'] === sheet2Obj['0-2']);
-//     if (!correspondingSheet1Obj) {
-//       // Non-matching object in sheet1
-//       const nonMatchingObject = {
-//         'pName-1': sheet2Obj['pName-2'],
-//         '0-1': sheet2Obj['0-2'],
-//         '1-1': sheet2Obj['1-2'],
-//         '2-1': sheet2Obj['2-2'],
-//         'pName-2': 'NOT FOUND',
-//         '0-2': 'NOT FOUND',
-//         '1-2': 'NOT FOUND',
-//         '2-2': 'NOT FOUND'
-//       };
-//       finalObjects.push(nonMatchingObject);
-//     }
-//   });
-// });
-
-// // console.log( "groupedRecords",finalObjects);
-// console.log("groupedRecords", groupedRecords);
-
-
 const objectsWith0_1 = records.filter(obj => '0-1' in obj);
 const objectsWith0_2 = records.filter(obj => '0-2' in obj);
 
@@ -306,17 +247,49 @@ foundValues.map(obj1 => {
   if (obj1['0-1']) {
     let obj2 = foundValues.find(obj => obj['0-2'] === obj1['0-1']);
     if (obj2) {
+      const truthObject = {
+
+      }
       let combinedObject = { ...obj1, ...obj2 };
       combinedFoundValues.push(combinedObject);
     }
   }
 });
 
+console.log("combined", combinedFoundValues);
+
+
+
+// Function to add dynamic keys
+const addDynamicKeys = (data) => {
+  // Iterate through each object in the array
+  data.forEach(obj => {
+    // Get all keys ending with '-1'
+    const keys = Object.keys(obj).filter(key => key.endsWith('-1'));
+
+    // Iterate through keys and add corresponding dynamic keys
+    keys.forEach(key => {
+      const index = key.split('-')[0];
+      const value1 = obj[key];
+      const value2 = obj[`${index}-2`];
+      const dynamicKey = `${index}-420`;
+
+      // Add the dynamic key with true or false based on the condition
+      obj[dynamicKey] = value1 === value2;
+    });
+  });
+
+  return data;
+}
+
+const truthTableCombined = addDynamicKeys(combinedFoundValues);
+
+
 
 const newRecords = [
   ...missingValues0_1,
   ...missingValues0_2,
-  ...combinedFoundValues,
+  ...truthTableCombined,
   {},
   {},
   {
@@ -338,7 +311,9 @@ const newRecords = [
   {
     'pName-1': 'Total Occurrence in Sheet 2',
     '0-1': `${missingValues0_1.length + combinedFoundValues.length}`
-  }
+  },
+  {},
+  {}
 ];
 
 
