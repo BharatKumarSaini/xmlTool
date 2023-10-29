@@ -407,7 +407,7 @@ const csvWriter = createCsvWriter({
  
 csvWriter.writeRecords(newRecords)      
     .then(() => {
-        console.log(`...Done. You can view the file in "output" folder with filename:- ${fileName}.csv`);
+        console.log(`...Done. You can view the file in "output" folder with filename:- ${fileName}`);
     });
 
 });
