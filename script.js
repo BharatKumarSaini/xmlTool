@@ -7,19 +7,46 @@ const xmlFiles = ['firstxml.xml', 'firstxml_copy.xml'];
 
 // Please Enter Required Parent Name Below
 // Please be careful it is CASE SENSETIVE
+// You can give multiple parents and it's respective children
+// eg:-  
+//  const parentName = [
+//   'FirstParent',
+//   'SecondParent',
+//   'remain'
+// ];
 
-const parentName = 'remain';
+const parentName = [
+
+  'remain',
+  'remain',
+  'remain'
+
+];
 
 // Please Enter Required Childrens in  quotes seperated by commas
-// eg:-  const children = ['lie',"freedom", "powder"];
+// eg:-  const children = [
+//   ["First","Parent", "Children"],
+//   ["Second","Parent", "multiple" , "Children"],
+//   ["lie","freedom", "powder"],
+// ];
 // Please be careful it is CASE SENSETIVE
-const children = ['lie',"freedom", "powder"];
+
+const children = [
+
+  ["lie","freedom", "powder"],
+  ["test","freedom", "powder"],
+  ["run","freedom", "powder"],
+
+];
 
 
 
+const xmlTool = async (parentNames , childrens ) => {
 
+parentNames.map((parentName , index) => {
+  const children = childrens[index];
 
-const fileName = `${parentName}_${children[0]}.csv`
+  const fileName = `${parentName}_${children[0]}.csv`
 
 
 const childrenLength = children.length;
@@ -140,6 +167,60 @@ const makeRecord = (parentInstance, sheetNumber, secondInstance, secondSheet) =>
   records.push(secondRecord)
 };
 
+
+
+// const firstValues = getAllValuesOfKey(parsedData[0], parentName)[0].sort((a, b) => {
+//   // Handle cases where the "name" key is empty
+//   const nameA = a[`${children[0]}`]? a[`${children[0]}`] : '';
+//   const nameB = b[`${children[0]}`] ? b[`${children[0]}`] : '';
+  
+//   if (nameA < nameB) {
+//     return -1;
+//   }
+//   if (nameA > nameB) {
+//     return 1;
+//   }
+  
+//   // If names are the same, sort by age
+//   if(children[1]){
+//     if (a[`${children[1]}`] < b[`${children[1]}`]) {
+//       return -1;
+//     }else{
+//       return 1;
+//     }
+//   }
+// });
+
+// // console.log("first ", firstValues);
+// const secondValues = getAllValuesOfKey(parsedData[1], parentName)[0].sort((a, b) => {
+//   // Handle cases where the "name" key is empty
+//   const nameA = a[`${children[0]}`]? a[`${children[0]}`] : '';
+//   const nameB = b[`${children[0]}`] ? b[`${children[0]}`] : '';
+  
+//   if (nameA < nameB) {
+//     return -1;
+//   }
+//   if (nameA > nameB) {
+//     return 1;
+//   }
+  
+//   // If names are the same, sort by age
+//   if(children[1]){
+//     if (a[`${children[1]}`] < b[`${children[1]}`]) {
+//       return -1;
+//     }else{
+//       return 1;
+//     }
+//   }
+// });
+
+
+
+
+
+
+
+
 const firstValues = getAllValuesOfKey(parsedData[0], parentName).sort((a, b) => {
   // Handle cases where the "name" key is empty
   const nameA = a[`${children[0]}`]? a[`${children[0]}`] : '';
@@ -183,7 +264,7 @@ const secondValues = getAllValuesOfKey(parsedData[1], parentName).sort((a, b) =>
       return 1;
     }
   }
-});;
+});
 
 const firstLength = firstValues.length
 const secondLength = secondValues.length
@@ -283,12 +364,14 @@ const addDynamicKeys = (data) => {
 }
 
 const truthTableCombined = addDynamicKeys(combinedFoundValues);
+const truthTableMissing0_1 = addDynamicKeys(missingValues0_1);
+const truthTableMissing0_2 = addDynamicKeys(missingValues0_2);
 
 
 
 const newRecords = [
-  ...missingValues0_1,
-  ...missingValues0_2,
+  ...truthTableMissing0_1,
+  ...truthTableMissing0_2,
   ...truthTableCombined,
   {},
   {},
@@ -326,3 +409,10 @@ csvWriter.writeRecords(newRecords)
     .then(() => {
         console.log(`...Done. You can view the file in "output" folder with filename:- ${fileName}.csv`);
     });
+
+});
+
+}
+
+
+ xmlTool(parentName, children)
